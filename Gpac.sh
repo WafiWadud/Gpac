@@ -14,6 +14,7 @@ main_menu() {
 		--switch \
 		--extra-button="Install Package" \
 		--extra-button="Update System" \
+		--extra-button="Search Package" \
 		--extra-button="Remove Package")
 
 	# Handle the choice made by the user
@@ -23,6 +24,9 @@ main_menu() {
 		;;
 	"Update System")
 		update_system
+		;;
+	"Search Package")
+		search_package
 		;;
 	"Remove Package")
 		remove_package
@@ -50,6 +54,17 @@ install_package() {
 update_system() {
 	PASSWORD=$(zenity --password)
 	echo $PASSWORD | sudo -S pacman -Syu --noconfirm
+}
+
+# Function to search for a package
+search_package() {
+	local pkg_name=$(zenity --entry --title="Search Package" --text="Enter package name:")
+
+	if [[ -n "$pkg_name" ]]; then
+		pacman -Ss "$pkg_name" | tr "\n" " " | zenity --text-info --title="Search Results"
+	else
+		zenity --error --text="No package name entered."
+	fi
 }
 
 # Function to remove a package
